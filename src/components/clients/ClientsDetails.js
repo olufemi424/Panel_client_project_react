@@ -10,12 +10,21 @@ import classnames from "classnames";
 class ClientsDetails extends Component {
   state = {
     showBalanceUpdate: false,
-    balanceUpdateAmount: ""
+    balanceUpdateAmount: null
   };
 
   //HANDLE STATE CHANGE
   handleChange = e => {
     this.setState({ [e.target.name]: e.target.value });
+  };
+
+  //Toggle Edit balance
+  toggleEditBalance = () => {
+    const { client } = this.props;
+    this.setState({
+      showBalanceUpdate: !this.state.showBalanceUpdate,
+      balanceUpdateAmount: parseFloat(client.balance).toFixed(2)
+    });
   };
 
   //HANDLE BALANCE UPDATE
@@ -26,30 +35,31 @@ class ClientsDetails extends Component {
     const { balanceUpdateAmount } = this.state;
 
     const clientUpdate = {
-      balance: parseFloat(balanceUpdateAmount)
+      balance: balanceUpdateAmount
     };
 
-    console.log(balanceUpdateAmount);
-
-    if (isNaN(balanceUpdateAmount) && balanceUpdateAmount === "") {
+    if (isNaN(clientUpdate.balance) || clientUpdate.balance === "") {
       alert("Pls Enter a Number");
     } else {
       //update firestore
       firestore.update({ collection: "clients", doc: client.id }, clientUpdate);
+
+      //  close form
+      this.setState({
+        showBalanceUpdate: false
+      });
     }
-    //  close form
-    this.setState({
-      showBalanceUpdate: false
-    });
   };
 
   //DELETE CLIENT
   onDeleteClient = () => {
     const { client, firestore, history } = this.props;
 
-    firestore
-      .delete({ collection: "clients", doc: client.id })
-      .then(history.push("/"));
+    if (window.confirm("Are you sure you want to delete Client ?")) {
+      firestore
+        .delete({ collection: "clients", doc: client.id })
+        .then(history.push("/"));
+    }
   };
 
   render() {
@@ -81,7 +91,7 @@ class ClientsDetails extends Component {
         </form>
       );
     } else {
-      balanceForm = "";
+      balanceForm = null;
     }
 
     if (client) {
@@ -90,7 +100,7 @@ class ClientsDetails extends Component {
           <div className="row">
             <div className="col-md-6">
               <Link to="/" className="btn btn-link">
-                <i className="fas fa-arrow-circle-left">Back To Dashboard</i>
+                <i className="fas fa-arrow-circle-left" /> Back To Dashboard
               </Link>
             </div>
             <div className="col-md-6">
@@ -132,14 +142,7 @@ class ClientsDetails extends Component {
                       ${parseFloat(client.balance).toFixed(2)}
                     </span>
                     <span>
-                      <a
-                        href="#!"
-                        onClick={() =>
-                          this.setState({
-                            showBalanceUpdate: !this.state.showBalanceUpdate
-                          })
-                        }
-                      >
+                      <a href="#!" onClick={this.toggleEditBalance}>
                         {" "}
                         <i className="fas fa-pencil-alt small" />
                       </a>
@@ -149,12 +152,8 @@ class ClientsDetails extends Component {
                 </div>
               </div>
               <ul className="list-group">
-                <li className="list-group-item">
-                  Contact Email: {client.email}
-                </li>
-                <li className="list-group-item">
-                  Contact Phone: {client.phone}
-                </li>
+                <li className="list-group-item">Email: {client.email}</li>
+                <li className="list-group-item">Phone: {client.phone}</li>
               </ul>
             </div>
           </div>

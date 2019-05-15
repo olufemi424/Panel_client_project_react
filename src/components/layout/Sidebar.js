@@ -5,7 +5,7 @@ export default function Sidebar() {
   return (
     <div>
       <Link to="/client/add" className=" btn btn-success btn-black">
-        <i className="fas fa-plus">New</i>
+        <i className="fas fa-plus" /> New
       </Link>
     </div>
   );
