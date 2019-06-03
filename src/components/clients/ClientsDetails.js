@@ -6,6 +6,10 @@ import { compose } from "redux";
 import { firestoreConnect } from "react-redux-firebase";
 import Spinner from "../layout/Spinner";
 import classnames from "classnames";
+import {
+  clientUpdateBalanceAction,
+  clientDeleteAction
+} from "../../store/actions/clientsAction";
 
 class ClientsDetails extends Component {
   state = {
@@ -31,7 +35,7 @@ class ClientsDetails extends Component {
   handleSubmit = e => {
     e.preventDefault();
 
-    const { client, firestore } = this.props;
+    const { id } = this.props;
     const { balanceUpdateAmount } = this.state;
 
     const clientUpdate = {
@@ -41,9 +45,7 @@ class ClientsDetails extends Component {
     if (isNaN(clientUpdate.balance) || clientUpdate.balance === "") {
       alert("Pls Enter a Number");
     } else {
-      //update firestore
-      firestore.update({ collection: "clients", doc: client.id }, clientUpdate);
-
+      this.props.clientUpdateBalanceAction(id, clientUpdate);
       //  close form
       this.setState({
         showBalanceUpdate: false
@@ -53,17 +55,17 @@ class ClientsDetails extends Component {
 
   //DELETE CLIENT
   onDeleteClient = () => {
-    const { client, firestore, history } = this.props;
-
+    const { id, history } = this.props;
+    console.log(id);
     if (window.confirm("Are you sure you want to delete Client ?")) {
-      firestore
-        .delete({ collection: "clients", doc: client.id })
-        .then(history.push("/"));
+      this.props.clientDeleteAction(id);
+      history.push("/dashboard");
     }
   };
 
   render() {
-    const { client } = this.props;
+    const { client, id } = this.props;
+
     const { showBalanceUpdate, balanceUpdateAmount } = this.state;
 
     let balanceForm = "";
@@ -99,13 +101,13 @@ class ClientsDetails extends Component {
         <div>
           <div className="row">
             <div className="col-md-6">
-              <Link to="/" className="btn btn-link">
+              <Link to="/dashboard" className="btn btn-link">
                 <i className="fas fa-arrow-circle-left" /> Back To Dashboard
               </Link>
             </div>
             <div className="col-md-6">
               <div className="btn-group float-right">
-                <Link to={`/client/edit/${client.id}`} className="btn btn-dark">
+                <Link to={`/client/edit/${id}`} className="btn btn-dark">
                   Edit
                 </Link>
                 <button
@@ -126,8 +128,7 @@ class ClientsDetails extends Component {
               <div className="row">
                 <div className="col-md-8 col-sm-6">
                   <h4>
-                    Client ID:{" "}
-                    <span className="text-secondary">{client.id}</span>
+                    Client ID: <span className="text-secondary">{id}</span>
                   </h4>
                 </div>
                 <div className="col-md-4 col-sm-6">
@@ -135,8 +136,8 @@ class ClientsDetails extends Component {
                     Balance:{" "}
                     <span
                       className={classnames({
-                        "text-danger": client.balance > 0,
-                        "text-success": client.balance === 0
+                        "text-danger": client.balance < 100,
+                        "text-success": client.balance >= 100
                       })}
                     >
                       ${parseFloat(client.balance).toFixed(2)}
@@ -152,8 +153,15 @@ class ClientsDetails extends Component {
                 </div>
               </div>
               <ul className="list-group">
-                <li className="list-group-item">Email: {client.email}</li>
-                <li className="list-group-item">Phone: {client.phone}</li>
+                {client.email && (
+                  <li className="list-group-item">Email: {client.email}</li>
+                )}
+                {client.phone && (
+                  <li className="list-group-item">Phone: {client.phone}</li>
+                )}
+                {client.address && (
+                  <li className="list-group-item">Address: {client.address}</li>
+                )}
               </ul>
             </div>
           </div>
@@ -169,11 +177,22 @@ ClientsDetails.propTypes = {
   firestore: PropTypes.object.isRequired
 };
 
+const mapStateToProps = (state, ownProps) => {
+  const id = ownProps.match.params.id;
+  const clients = state.firestore.data.clients;
+  const client = clients ? clients[id] : null;
+  return {
+    client: client,
+    id: id
+  };
+};
+
+const mapDispatchToProps = { clientUpdateBalanceAction, clientDeleteAction };
+
 export default compose(
-  firestoreConnect(props => [
-    { collection: "clients", storeAs: "client", doc: props.match.params.id }
-  ]),
-  connect(({ firestore: { ordered } }, props) => ({
-    client: ordered.client && ordered.client[0]
-  }))
+  firestoreConnect([{ collection: "clients" }]),
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )
 )(ClientsDetails);

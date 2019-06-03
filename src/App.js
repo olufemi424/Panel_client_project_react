@@ -1,10 +1,8 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-
 import { UserIsNotAuthenticated, UserIsAuthenticated } from "./helpers/auth";
-
 import { Provider } from "react-redux";
-import store from "./store";
+import store from "./store/store";
 
 import "./App.css";
 import AppNavBar from "./components/layout/AppNavbar";
@@ -14,6 +12,7 @@ import EditClient from "./components/clients/EditClient";
 import ClientDetails from "./components/clients/ClientsDetails";
 import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
+import Landing from "./components/layout/Landing";
 
 class App extends Component {
   render() {
@@ -24,9 +23,10 @@ class App extends Component {
             <AppNavBar />
             <div className="container">
               <Switch>
+                <Route exact path="/" component={Landing} />
                 <Route
                   exact
-                  path="/"
+                  path="/dashboard"
                   component={UserIsAuthenticated(Dashboard)}
                 />
                 <Route

@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { firebaseConnect } from "react-redux-firebase";
-import { notifyUser } from "../../reducers/actions/notifyAction";
+import { notifyUser } from "../../store/actions/notifyAction";
 import Alert from "../layout/Alert";
 
 class Login extends Component {
@@ -27,6 +27,7 @@ class Login extends Component {
     firebase
       .login({ email: email, password: password })
       .catch(err => notifyUser("Invalid Login Credentials", "error"));
+    this.props.history.push("/dashboard");
   };
 
   render() {
@@ -86,10 +87,15 @@ Login.propTypes = {
   firebase: PropTypes.object.isRequired
 };
 
+const mapStateToProps = state => {
+  return { notify: state.notify };
+};
+const mapDispatchToProps = { notifyUser };
+
 export default compose(
   firebaseConnect(),
   connect(
-    (state, props) => ({ notify: state.notify }),
-    { notifyUser }
+    mapStateToProps,
+    mapDispatchToProps
   )
 )(Login);
