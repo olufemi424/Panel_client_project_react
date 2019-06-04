@@ -7,6 +7,9 @@ const initialState = {
 };
 
 export default function(state = initialState, action) {
+  if (state.client.balance) {
+    state.balance = state.client.balance;
+  }
   switch (action.type) {
     case type.UPDATE_BALANCE:
       return {
@@ -17,6 +20,11 @@ export default function(state = initialState, action) {
       return {
         ...state,
         clients: action.payload
+      };
+    case type.GET_CLIENT:
+      return {
+        ...state,
+        client: action.payload
       };
     default:
       return state;

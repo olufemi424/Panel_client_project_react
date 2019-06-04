@@ -1,8 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-import { compose } from "redux";
-import { firestoreConnect } from "react-redux-firebase";
 import PropTypes from "prop-types";
 import Spinner from "../layout/Spinner";
 import { getAllClients } from "../../store/actions/clientsAction";
@@ -17,17 +15,10 @@ class Clients extends Component {
   }
 
   static getDerivedStateFromProps(props, state) {
-    let clients = [];
-    if (props.clients) {
-      for (let key in props.clients) {
-        clients.push({ ...props.clients[key], id: key });
-      }
-    }
-    state.clients = clients;
-
-    if (state.clients) {
+    const { clients } = props;
+    if (clients) {
       // Add balances
-      const total = state.clients.reduce((total, client) => {
+      const total = clients.reduce((total, client) => {
         return total + parseFloat(client.balance);
       }, 0);
       return { totalOwed: total };
@@ -36,7 +27,8 @@ class Clients extends Component {
   }
 
   render() {
-    const { clients, totalOwed } = this.state;
+    const { totalOwed } = this.state;
+    const { clients } = this.props;
 
     if (clients) {
       return (
@@ -94,22 +86,19 @@ class Clients extends Component {
 }
 
 Clients.propTypes = {
-  firestore: PropTypes.object.isRequired,
-  clients: PropTypes.object
+  clients: PropTypes.array.isRequired,
+  getAllClients: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
-  clients: state.firestore.data.clients
+  clients: state.clientsData.clients
 });
 
 const mapDispatchToProps = {
   getAllClients
 };
 
-export default compose(
-  firestoreConnect([{ collection: "clients" }]),
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
 )(Clients);

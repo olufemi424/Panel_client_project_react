@@ -2,13 +2,12 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-import { compose } from "redux";
-import { firestoreConnect } from "react-redux-firebase";
 import Spinner from "../layout/Spinner";
 import classnames from "classnames";
 import {
   clientUpdateBalanceAction,
-  clientDeleteAction
+  clientDeleteAction,
+  getClientInfo
 } from "../../store/actions/clientsAction";
 
 class ClientsDetails extends Component {
@@ -16,6 +15,10 @@ class ClientsDetails extends Component {
     showBalanceUpdate: false,
     balanceUpdateAmount: null
   };
+
+  componentDidMount() {
+    this.props.getClientInfo(this.props.match.params.id);
+  }
 
   //HANDLE STATE CHANGE
   handleChange = e => {
@@ -35,7 +38,7 @@ class ClientsDetails extends Component {
   handleSubmit = e => {
     e.preventDefault();
 
-    const { id } = this.props;
+    const { id } = this.props.match.params;
     const { balanceUpdateAmount } = this.state;
 
     const clientUpdate = {
@@ -56,7 +59,6 @@ class ClientsDetails extends Component {
   //DELETE CLIENT
   onDeleteClient = () => {
     const { id, history } = this.props;
-    console.log(id);
     if (window.confirm("Are you sure you want to delete Client ?")) {
       this.props.clientDeleteAction(id);
       history.push("/dashboard");
@@ -64,10 +66,8 @@ class ClientsDetails extends Component {
   };
 
   render() {
-    const { client, id } = this.props;
-
+    const { client, id, balance } = this.props;
     const { showBalanceUpdate, balanceUpdateAmount } = this.state;
-
     let balanceForm = "";
     //if balance form should display
     if (showBalanceUpdate) {
@@ -136,11 +136,11 @@ class ClientsDetails extends Component {
                     Balance:{" "}
                     <span
                       className={classnames({
-                        "text-danger": client.balance < 100,
-                        "text-success": client.balance >= 100
+                        "text-danger": balance < 100,
+                        "text-success": balance >= 100
                       })}
                     >
-                      ${parseFloat(client.balance).toFixed(2)}
+                      ${balance && parseFloat(balance).toFixed(2)}
                     </span>
                     <span>
                       <a href="#!" onClick={this.toggleEditBalance}>
@@ -174,25 +174,24 @@ class ClientsDetails extends Component {
 }
 
 ClientsDetails.propTypes = {
-  firestore: PropTypes.object.isRequired
+  client: PropTypes.object.isRequired,
+  clientUpdateBalanceAction: PropTypes.func.isRequired,
+  clientDeleteAction: PropTypes.func.isRequired,
+  getClientInfo: PropTypes.func.isRequired
 };
 
-const mapStateToProps = (state, ownProps) => {
-  const id = ownProps.match.params.id;
-  const clients = state.firestore.data.clients;
-  const client = clients ? clients[id] : null;
-  return {
-    client: client,
-    id: id
-  };
+const mapStateToProps = state => ({
+  client: state.clientsData.client,
+  balance: state.clientsData.balance
+});
+
+const mapDispatchToProps = {
+  clientUpdateBalanceAction,
+  clientDeleteAction,
+  getClientInfo
 };
 
-const mapDispatchToProps = { clientUpdateBalanceAction, clientDeleteAction };
-
-export default compose(
-  firestoreConnect([{ collection: "clients" }]),
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
 )(ClientsDetails);
