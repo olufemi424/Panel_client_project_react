@@ -11,7 +11,7 @@ import rootReducer from "./reducers/rootReducer";
 //keys
 import keys from "../config/keys";
 
-const firebaseConfig = {
+const fbConfig = {
   apiKey: keys.apiKey,
   authDomain: keys.authDomain,
   databaseURL: keys.databaseURL,
@@ -27,28 +27,19 @@ const rrfConfig = {
 };
 
 //initialize firebase instance
-firebase.initializeApp(firebaseConfig);
-
+firebase.initializeApp(fbConfig);
 //init firestore
 firebase.firestore();
 
-// Add reactReduxFirebase enhancer when making store creator
-const createStoreWithFirebase = compose(
-  reactReduxFirebase(firebase, rrfConfig), // firebase instance as first argument
-  reduxFirestore(firebase)
-)(createStore);
-
-// Create store with reducers and initial state
-const initialState = {};
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 //create store
-const store = createStoreWithFirebase(
+const store = createStore(
   rootReducer,
-  initialState,
-  compose(
-    applyMiddleware(thunk.withExtraArgument({ getFirebase, getFirestore })),
-    reactReduxFirebase(firebase),
-    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+  composeEnhancers(
+    reactReduxFirebase(firebase, rrfConfig),
+    reduxFirestore(firebase),
+    applyMiddleware(thunk.withExtraArgument({ getFirebase, getFirestore }))
   )
 );
 

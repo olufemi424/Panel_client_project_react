@@ -66,7 +66,7 @@ class ClientsDetails extends Component {
   };
 
   render() {
-    const { client, id, balance } = this.props;
+    const { client, id } = this.props;
     const { showBalanceUpdate, balanceUpdateAmount } = this.state;
     let balanceForm = "";
     //if balance form should display
@@ -136,11 +136,11 @@ class ClientsDetails extends Component {
                     Balance:{" "}
                     <span
                       className={classnames({
-                        "text-danger": balance < 100,
-                        "text-success": balance >= 100
+                        "text-danger": client.balance < 100,
+                        "text-success": client.balance >= 100
                       })}
                     >
-                      ${balance && parseFloat(balance).toFixed(2)}
+                      ${parseFloat(client.balance).toFixed(2)}
                     </span>
                     <span>
                       <a href="#!" onClick={this.toggleEditBalance}>
@@ -181,8 +181,7 @@ ClientsDetails.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  client: state.clientsData.client,
-  balance: state.clientsData.balance
+  client: state.clientsData.client
 });
 
 const mapDispatchToProps = {

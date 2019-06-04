@@ -1,4 +1,4 @@
-import { NOTIFY_USER } from "../actions/types";
+import * as types from "../actions/types";
 
 const initialState = {
   message: null,
@@ -7,7 +7,8 @@ const initialState = {
 
 export default function(state = initialState, action) {
   switch (action.type) {
-    case NOTIFY_USER:
+    case types.ERROR_MESSAGE:
+      console.log(action.message);
       return {
         ...state,
         message: action.message,

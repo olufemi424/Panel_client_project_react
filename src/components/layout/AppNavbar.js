@@ -1,9 +1,8 @@
 import React, { Component } from "react";
 import { Link, withRouter } from "react-router-dom";
 import { connect } from "react-redux";
-import { compose } from "redux";
 import PropTypes from "prop-types";
-import { firebaseConnect } from "react-redux-firebase";
+import { logOutUser } from "../../store/actions/authAction";
 
 class AppNavbar extends Component {
   state = {
@@ -12,7 +11,6 @@ class AppNavbar extends Component {
 
   static getDerivedStateFromProps(props, state) {
     const { auth } = props;
-
     if (auth.uid) {
       return { isAuthenticated: true };
     } else {
@@ -21,11 +19,9 @@ class AppNavbar extends Component {
   }
 
   //logout
-
   handleLogOutClick = e => {
     e.preventDefault();
-    const { firebase } = this.props;
-    firebase.logout();
+    this.props.logOutUser();
   };
 
   render() {
@@ -96,13 +92,17 @@ class AppNavbar extends Component {
 }
 
 AppNavbar.propTypes = {
-  firebase: PropTypes.object.isRequired,
   auth: PropTypes.object.isRequired
 };
 
-export default compose(
-  firebaseConnect(),
-  connect((state, props) => ({
-    auth: state.firebase.auth
-  }))
+const mapStateToProps = state => ({
+  auth: state.firebase.auth
+});
+const mapDispatchToProps = {
+  logOutUser
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
 )(withRouter(AppNavbar));

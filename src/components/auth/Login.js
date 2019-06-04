@@ -1,9 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { compose } from "redux";
-import { firebaseConnect } from "react-redux-firebase";
-import { notifyUser } from "../../store/actions/notifyAction";
+import { loginUser } from "../../store/actions/authAction";
 import Alert from "../layout/Alert";
 
 class Login extends Component {
@@ -20,13 +18,8 @@ class Login extends Component {
 
   handleSubmit = e => {
     e.preventDefault();
-
     const { email, password } = this.state;
-    const { firebase, notifyUser } = this.props;
-
-    firebase
-      .login({ email: email, password: password })
-      .catch(err => notifyUser("Invalid Login Credentials", "error"));
+    this.props.loginUser({ email, password });
     this.props.history.push("/dashboard");
   };
 
@@ -84,18 +77,13 @@ class Login extends Component {
 }
 
 Login.propTypes = {
-  firebase: PropTypes.object.isRequired
+  loginUser: PropTypes.func.isRequired
 };
 
-const mapStateToProps = state => {
-  return { notify: state.notify };
-};
-const mapDispatchToProps = { notifyUser };
+const mapStateToProps = state => ({ notify: state.notify });
+const mapDispatchToProps = { loginUser };
 
-export default compose(
-  firebaseConnect(),
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
 )(Login);

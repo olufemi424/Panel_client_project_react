@@ -15,7 +15,6 @@ export const getAllClients = () => {
         });
       })
       .then(() => {
-        console.log(clients);
         dispatch({ type: type.GET_ALL_CLIENTS, payload: clients });
       })
       .catch(err => {

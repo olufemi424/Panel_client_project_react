@@ -2,19 +2,15 @@ import * as type from "../actions/types";
 
 const initialState = {
   clients: [],
-  client: {},
-  balance: null
+  client: {}
 };
 
 export default function(state = initialState, action) {
-  if (state.client.balance) {
-    state.balance = state.client.balance;
-  }
   switch (action.type) {
     case type.UPDATE_BALANCE:
       return {
         ...state,
-        balance: action.payload
+        client: { ...state.client, balance: action.payload }
       };
     case type.GET_ALL_CLIENTS:
       return {
