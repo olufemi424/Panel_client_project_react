@@ -9,6 +9,7 @@ class AddClient extends Component {
     lastName: "",
     email: "",
     phone: "",
+    address: "",
     balance: ""
   };
 
@@ -18,22 +19,18 @@ class AddClient extends Component {
 
   handleSubmit = e => {
     e.preventDefault();
-
     const newClient = this.state;
-
     const { firestore, history } = this.props;
-
     //if no balance. make 0
-
     if (newClient.balance === "") {
       newClient.balance = 0;
     }
-
     //add to firestore
     firestore
       .add({ collection: "clients" }, newClient)
-      .then(() => history.push("/"));
+      .then(() => history.push("/dashboard"));
   };
+
   render() {
     return (
       <div>
@@ -89,6 +86,18 @@ class AddClient extends Component {
                   className="form-control"
                   onChange={this.handleChange}
                   value={this.state.phone}
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="phone">Address</label>
+                <input
+                  type="text"
+                  name="address"
+                  minLength="10"
+                  className="form-control"
+                  onChange={this.handleChange}
+                  value={this.state.address}
                 />
               </div>
 

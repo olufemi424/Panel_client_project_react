@@ -1,14 +1,15 @@
-import { createStore, combineReducers, compose } from "redux";
+import { createStore, compose, applyMiddleware } from "redux";
+import thunk from "redux-thunk";
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/firestore";
-import { reactReduxFirebase, firebaseReducer } from "react-redux-firebase";
-import { reduxFirestore, firestoreReducer } from "redux-firestore";
+import { reactReduxFirebase, getFirebase } from "react-redux-firebase";
+import { reduxFirestore, getFirestore } from "redux-firestore";
 
 //reducers
-import notifyReducer from "./reducers/notifyReducer";
+import rootReducer from "./reducers/rootReducer";
 //keys
-import keys from "../src/config/keys";
+import keys from "../config/keys";
 
 const firebaseConfig = {
   apiKey: keys.apiKey,
@@ -31,22 +32,11 @@ firebase.initializeApp(firebaseConfig);
 //init firestore
 firebase.firestore();
 
-// const firestore = firebase.firestore();
-// const settings = { timestampsInSnapshots: true };
-// firestore.settings(settings);
-
 // Add reactReduxFirebase enhancer when making store creator
 const createStoreWithFirebase = compose(
   reactReduxFirebase(firebase, rrfConfig), // firebase instance as first argument
   reduxFirestore(firebase)
 )(createStore);
-
-// Add firebase to reducers
-const rootReducer = combineReducers({
-  firebase: firebaseReducer,
-  firestore: firestoreReducer,
-  notify: notifyReducer
-});
 
 // Create store with reducers and initial state
 const initialState = {};
@@ -56,6 +46,7 @@ const store = createStoreWithFirebase(
   rootReducer,
   initialState,
   compose(
+    applyMiddleware(thunk.withExtraArgument({ getFirebase, getFirestore })),
     reactReduxFirebase(firebase),
     window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
   )

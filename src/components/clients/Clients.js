@@ -12,22 +12,27 @@ class Clients extends Component {
   };
 
   static getDerivedStateFromProps(props, state) {
-    const { clients } = props;
+    let clients = [];
+    if (props.clients) {
+      for (let key in props.clients) {
+        clients.push({ ...props.clients[key], id: key });
+      }
+    }
+    state.clients = clients;
 
-    if (clients) {
+    if (state.clients) {
       // Add balances
-      const total = clients.reduce((total, client) => {
-        return total + parseFloat(client.balance.toString());
+      const total = state.clients.reduce((total, client) => {
+        return total + parseFloat(client.balance);
       }, 0);
-
       return { totalOwed: total };
     }
     return null;
   }
 
   render() {
-    const { clients } = this.props;
-    const { totalOwed } = this.state;
+    const { clients, totalOwed } = this.state;
+
     if (clients) {
       return (
         <div>
@@ -85,12 +90,14 @@ class Clients extends Component {
 
 Clients.propTypes = {
   firestore: PropTypes.object.isRequired,
-  clients: PropTypes.array
+  clients: PropTypes.object
 };
+
+const mapStateToProps = state => ({
+  clients: state.firestore.data.clients
+});
 
 export default compose(
   firestoreConnect([{ collection: "clients" }]),
-  connect((state, props) => ({
-    clients: state.firestore.ordered.clients
-  }))
+  connect(mapStateToProps)
 )(Clients);
