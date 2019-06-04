@@ -5,11 +5,16 @@ import { compose } from "redux";
 import { firestoreConnect } from "react-redux-firebase";
 import PropTypes from "prop-types";
 import Spinner from "../layout/Spinner";
+import { getAllClients } from "../../store/actions/clientsAction";
 
 class Clients extends Component {
   state = {
     totalOwed: null
   };
+
+  componentDidMount() {
+    this.props.getAllClients();
+  }
 
   static getDerivedStateFromProps(props, state) {
     let clients = [];
@@ -97,7 +102,14 @@ const mapStateToProps = state => ({
   clients: state.firestore.data.clients
 });
 
+const mapDispatchToProps = {
+  getAllClients
+};
+
 export default compose(
   firestoreConnect([{ collection: "clients" }]),
-  connect(mapStateToProps)
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )
 )(Clients);

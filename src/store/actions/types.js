@@ -1,1 +1,5 @@
 export const NOTIFY_USER = "NOTIFY_USER";
+export const UPDATE_BALANCE = "UPDATE_BALANCE";
+export const GET_ALL_CLIENTS = "GET_ALL_CLIENTS";
+export const GET_CLIENT = "GET_CLIENT";
+export const DELETE_CLIENT = "DELETE_CLIENT";

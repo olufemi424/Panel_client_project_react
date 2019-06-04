@@ -81,7 +81,7 @@ class AppNavbar extends Component {
                 </li>
                 <li className="nav-item" onClick={this.handleLogOutClick}>
                   <Link to="" className="nav-link">
-                    logout
+                    Logout
                   </Link>
                 </li>
               </ul>

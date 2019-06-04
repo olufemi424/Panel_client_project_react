@@ -31,6 +31,16 @@ class App extends Component {
                 />
                 <Route
                   exact
+                  path="/login"
+                  component={UserIsNotAuthenticated(Login)}
+                />
+                <Route
+                  exact
+                  path="/register"
+                  component={UserIsNotAuthenticated(Register)}
+                />
+                <Route
+                  exact
                   path="/client/add"
                   component={UserIsAuthenticated(AddClient)}
                 />
@@ -43,17 +53,6 @@ class App extends Component {
                   exact
                   path="/client/edit/:id"
                   component={UserIsAuthenticated(EditClient)}
-                />
-                <Route
-                  exact
-                  path="/login"
-                  component={UserIsNotAuthenticated(Login)}
-                />
-
-                <Route
-                  exact
-                  path="/register"
-                  component={UserIsNotAuthenticated(Register)}
                 />
               </Switch>
             </div>
