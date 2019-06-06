@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import { firestoreConnect } from "react-redux-firebase";
+import { connect } from "react-redux";
 import PropTypes from "prop-types";
+import { addClient } from "../../store/actions/clientsAction";
 
 class AddClient extends Component {
   state = {
@@ -20,18 +21,17 @@ class AddClient extends Component {
   handleSubmit = e => {
     e.preventDefault();
     const newClient = this.state;
-    const { firestore, history } = this.props;
+    const { history } = this.props;
     //if no balance. make 0
     if (newClient.balance === "") {
       newClient.balance = 0;
     }
     //add to firestore
-    firestore
-      .add({ collection: "clients" }, newClient)
-      .then(() => history.push("/dashboard"));
+    this.props.addClient(newClient, history);
   };
 
   render() {
+    const { disableBalanceOnAdd } = this.props.settings;
     return (
       <div>
         <div className="row">
@@ -109,6 +109,7 @@ class AddClient extends Component {
                   className="form-control"
                   onChange={this.handleChange}
                   value={this.state.balance}
+                  disabled={disableBalanceOnAdd}
                 />
               </div>
             </div>
@@ -126,7 +127,15 @@ class AddClient extends Component {
 }
 
 AddClient.protoType = {
-  firestore: PropTypes.object.isRequired
+  settings: PropTypes.object.isRequired,
+  addClient: PropTypes.func.isRequired
 };
 
-export default firestoreConnect()(AddClient);
+const mapStateToProps = state => ({
+  settings: state.settings
+});
+
+export default connect(
+  mapStateToProps,
+  { addClient }
+)(AddClient);

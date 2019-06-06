@@ -13,7 +13,7 @@ export const createUser = userData => {
       .catch(err => {
         dispatch({
           type: types.ERROR_MESSAGE,
-          message: "Invalid Credentials",
+          message: "User Alredy Exits",
           messageType: "error"
         });
       });

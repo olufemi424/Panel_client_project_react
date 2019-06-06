@@ -44,7 +44,10 @@ class EditClient extends Component {
   };
 
   render() {
-    const { client } = this.props;
+    const {
+      client,
+      settings: { disableBalanceOnEdit }
+    } = this.props;
 
     if (client) {
       return (
@@ -130,6 +133,7 @@ class EditClient extends Component {
                     onChange={this.handleChange}
                     defaultValue={client.balance}
                     ref={this.balanceInput}
+                    disabled={disableBalanceOnEdit}
                   />
                 </div>
               </div>
@@ -154,7 +158,8 @@ EditClient.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  client: state.clientsData.client
+  client: state.clientsData.client,
+  settings: state.settings
 });
 
 const mapDispatchToProps = {

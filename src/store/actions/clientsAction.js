@@ -1,5 +1,22 @@
 import * as type from "./types";
 
+export const addClient = (clientData, history) => {
+  return (dispatch, getState, { getFirestore }) => {
+    //make async call to db
+    const fireStore = getFirestore();
+    fireStore
+      .collection("clients")
+      .add(clientData)
+      .then(() => {
+        dispatch({ type: type.UPDATE_CLIENT_INFO, payload: clientData });
+        history.push("/dashboard");
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+};
+
 export const getAllClients = () => {
   return async (dispatch, getState, { getFirestore }) => {
     //make async call to db
@@ -19,7 +36,10 @@ export const getAllClients = () => {
         });
       })
       .then(() => {
-        dispatch({ type: type.GET_ALL_CLIENTS, payload: clients });
+        dispatch({
+          type: type.GET_ALL_CLIENTS,
+          payload: clients.sort(compare)
+        });
       })
       .catch(err => {
         console.log(err);
@@ -83,7 +103,7 @@ export const clientUpdateBalanceAction = (clientId, updateAmount) => {
   };
 };
 
-export const clientDeleteAction = (clientId, updateAmount) => {
+export const clientDeleteAction = clientId => {
   return (dispatch, getState, { getFirestore }) => {
     const fireStore = getFirestore();
     fireStore
@@ -97,3 +117,6 @@ export const clientDeleteAction = (clientId, updateAmount) => {
       });
   };
 };
+
+const compare = (a, b) =>
+  a.firstName < b.firstName ? -1 : a.firstName > b.firstName ? 1 : 0;

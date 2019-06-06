@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { createUser } from "../../store/actions/authAction";
+import Alert from "../layout/Alert";
 
 class Register extends Component {
   state = {
@@ -10,6 +11,13 @@ class Register extends Component {
     email: "",
     password: ""
   };
+
+  componentWillMount() {
+    const { allowRegistration } = this.props.settings;
+    if (!allowRegistration) {
+      this.props.history.push("/login");
+    }
+  }
 
   handleChange = e => {
     this.setState({
@@ -24,11 +32,15 @@ class Register extends Component {
   };
 
   render() {
+    const { message, messageType } = this.props.notify;
     return (
       <div className="row">
         <div className="col-md-6 mx-auto">
           <div className="card">
             <div className="card-body">
+              {message ? (
+                <Alert message={message} messageType={messageType} />
+              ) : null}
               <h1 className="text-center pb-4 pt-3">
                 <span className="text-primary">
                   <i className="fas fa-lock" /> Sign Up
@@ -79,10 +91,9 @@ class Register extends Component {
                     onChange={this.handleChange}
                     required
                   />
-
                   <input
                     type="submit"
-                    value="Submit"
+                    value="Register"
                     className="btn btn-primary btn-block mt-5"
                   />
                 </div>
@@ -99,9 +110,13 @@ Register.propTypes = {
   createUser: PropTypes.func.isRequired
 };
 
+const mapStateToProps = state => ({
+  notify: state.notify,
+  settings: state.settings
+});
 const mapDispatchToProps = { createUser };
 
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(Register);
