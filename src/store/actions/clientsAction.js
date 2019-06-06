@@ -11,7 +11,11 @@ export const getAllClients = () => {
       .get()
       .then(snapshot => {
         snapshot.forEach(doc => {
-          clients.push({ ...doc.data(), id: doc.id });
+          if (doc.exists) {
+            clients.push({ ...doc.data(), id: doc.id });
+          } else {
+            throw new Error("Clients not found");
+          }
         });
       })
       .then(() => {
@@ -33,8 +37,28 @@ export const getClientInfo = clientId => {
       .get()
       .then(doc => {
         if (doc.exists) {
-          dispatch({ type: type.GET_CLIENT, payload: doc.data() });
+          dispatch({
+            type: type.GET_CLIENT,
+            payload: { ...doc.data(), id: doc.id }
+          });
         }
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+};
+
+export const clientUpdateInfoAction = (clientId, updateClientData) => {
+  return (dispatch, getState, { getFirestore }) => {
+    //make async call to db
+    const fireStore = getFirestore();
+    fireStore
+      .collection("clients")
+      .doc(`/${clientId}`)
+      .update(updateClientData)
+      .then(() => {
+        dispatch({ type: type.UPDATE_CLIENT_INFO, payload: updateClientData });
       })
       .catch(err => {
         console.log(err);

@@ -22,6 +22,11 @@ export default function(state = initialState, action) {
         ...state,
         client: action.payload
       };
+    case type.UPDATE_CLIENT_INFO:
+      return {
+        ...state,
+        client: action.payload
+      };
     default:
       return state;
   }

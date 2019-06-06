@@ -71,7 +71,7 @@ class AppNavbar extends Component {
             {isAuthenticated ? (
               <ul className="navbar-nav ml-auto">
                 <li className="nav-item">
-                  <Link to="/" className="nav-link">
+                  <Link to="/dashboard" className="nav-link">
                     {auth.email}
                   </Link>
                 </li>

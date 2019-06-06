@@ -66,7 +66,8 @@ class ClientsDetails extends Component {
   };
 
   render() {
-    const { client, id } = this.props;
+    const { client } = this.props;
+    const { id } = this.props.match.params;
     const { showBalanceUpdate, balanceUpdateAmount } = this.state;
     let balanceForm = "";
     //if balance form should display
@@ -96,7 +97,7 @@ class ClientsDetails extends Component {
       balanceForm = null;
     }
 
-    if (client) {
+    if (Object.entries(client).length !== 0) {
       return (
         <div>
           <div className="row">
