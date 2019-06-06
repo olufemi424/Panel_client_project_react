@@ -71,8 +71,13 @@ class AppNavbar extends Component {
             {isAuthenticated ? (
               <ul className="navbar-nav ml-auto">
                 <li className="nav-item">
-                  <Link to="/dashboard" className="nav-link">
+                  <a href="#!" className="nav-link">
                     {auth.email}
+                  </a>
+                </li>
+                <li className="nav-item">
+                  <Link to="/settings" className="nav-link">
+                    Settings
                   </Link>
                 </li>
                 <li className="nav-item" onClick={this.handleLogOutClick}>
@@ -92,11 +97,13 @@ class AppNavbar extends Component {
 }
 
 AppNavbar.propTypes = {
-  auth: PropTypes.object.isRequired
+  auth: PropTypes.object.isRequired,
+  settings: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({
-  auth: state.firebase.auth
+  auth: state.firebase.auth,
+  settings: state.settings
 });
 const mapDispatchToProps = {
   logOutUser

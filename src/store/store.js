@@ -33,9 +33,27 @@ firebase.firestore();
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
+//check for settings in local storage
+if (localStorage.getItem("settings") == null) {
+  // default settings
+  const defaultSettings = {
+    disableBalanceOnAdd: true,
+    disableBalanceOnEdit: false,
+    allowRegistration: false
+  };
+
+  //set to localStorage
+  localStorage.setItem("settings", JSON.stringify(defaultSettings));
+}
+
+const initialState = {
+  settings: JSON.parse(localStorage.getItem("settings"))
+};
+
 //create store
 const store = createStore(
   rootReducer,
+  initialState,
   composeEnhancers(
     reactReduxFirebase(firebase, rrfConfig),
     reduxFirestore(firebase),

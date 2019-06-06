@@ -1,9 +1,7 @@
 import React, { Component } from "react";
-import { withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
-// import { connect } from "react-redux";
-// import { compose } from "redux";
-import { firebaseConnect } from "react-redux-firebase";
+import { connect } from "react-redux";
+import { createUser } from "../../store/actions/authAction";
 
 class Register extends Component {
   state = {
@@ -21,13 +19,8 @@ class Register extends Component {
 
   handleSubmit = e => {
     e.preventDefault();
-
     const { email, password, firstName, lastName } = this.state;
-    const { firebase } = this.props;
-
-    firebase
-      .createUser({ firstName, lastName, email, password })
-      .catch(err => alert("invalid credentials"));
+    this.props.createUser({ email, password, firstName, lastName });
   };
 
   render() {
@@ -103,7 +96,12 @@ class Register extends Component {
 }
 
 Register.propTypes = {
-  firebase: PropTypes.object.isRequired
+  createUser: PropTypes.func.isRequired
 };
 
-export default firebaseConnect()(withRouter(Register));
+const mapDispatchToProps = { createUser };
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(Register);

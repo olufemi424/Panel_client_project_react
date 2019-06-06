@@ -13,6 +13,7 @@ import ClientDetails from "./components/clients/ClientsDetails";
 import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
 import Landing from "./components/layout/Landing";
+import Settings from "./components/settings/Settings";
 
 class App extends Component {
   render() {
@@ -38,6 +39,11 @@ class App extends Component {
                   exact
                   path="/register"
                   component={UserIsNotAuthenticated(Register)}
+                />
+                <Route
+                  exact
+                  path="/settings"
+                  component={UserIsAuthenticated(Settings)}
                 />
                 <Route
                   exact
