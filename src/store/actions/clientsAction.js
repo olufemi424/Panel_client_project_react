@@ -17,7 +17,7 @@ export const addClient = (clientData, history) => {
   };
 };
 
-export const getAllClients = () => {
+export const getAllClients = (params = "") => {
   return async (dispatch, getState, { getFirestore }) => {
     //make async call to db
     const fireStore = getFirestore();
@@ -118,5 +118,43 @@ export const clientDeleteAction = clientId => {
   };
 };
 
+export const searchClient = params => {
+  return async (dispatch, getState, { getFirestore }) => {
+    const fireStore = getFirestore();
+    const clients = [];
+
+    await fireStore
+      .collection("clients")
+      .get()
+      .then(snapshot => {
+        snapshot.forEach(doc => {
+          if (doc.exists) {
+            clients.push({ ...doc.data(), id: doc.id });
+          } else {
+            throw new Error("Clients not found");
+          }
+        });
+      })
+      .then(() => {
+        const searchClients = clients.filter(client => {
+          const regex = new RegExp(`^${params}`, "gi");
+          return (
+            client.lastName.match(regex) ||
+            client.firstName.match(regex) ||
+            client.email.match(regex)
+          );
+        });
+        dispatch({
+          type: type.SEARCH_CLIENT,
+          payload: searchClients.sort(compare)
+        });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+};
+
+//helper function
 const compare = (a, b) =>
   a.firstName < b.firstName ? -1 : a.firstName > b.firstName ? 1 : 0;

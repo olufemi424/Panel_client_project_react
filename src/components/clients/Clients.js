@@ -3,11 +3,12 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import Spinner from "../layout/Spinner";
 import ClientTable from "./ClientTable";
-import { getAllClients } from "../../store/actions/clientsAction";
+import { getAllClients, searchClient } from "../../store/actions/clientsAction";
 
 class Clients extends Component {
   state = {
-    totalOwed: null
+    totalOwed: null,
+    searchParama: ""
   };
 
   componentDidMount() {
@@ -26,6 +27,16 @@ class Clients extends Component {
     return null;
   }
 
+  handleClick = e => {
+    e.preventDefault();
+    this.props.searchClient(e.target.value);
+  };
+
+  handleChange = e => {
+    e.preventDefault();
+    this.props.searchClient(e.target.value);
+  };
+
   render() {
     const { totalOwed } = this.state;
     const { clients } = this.props;
@@ -38,6 +49,23 @@ class Clients extends Component {
               {" "}
               <i className="fas fa-users" /> Client
             </h2>
+            <form className="form-inline my-3">
+              <input
+                className="form-control mr-sm-2"
+                type="search"
+                name="searchParama"
+                placeholder="Search"
+                onChange={this.handleChange}
+                aria-label="Search"
+              />
+              <button
+                className="btn btn-outline-success my-2 my-sm-0"
+                type="submit"
+                onClick={this.handleClick}
+              >
+                Search
+              </button>
+            </form>
           </div>
           <div className="col-md-6">
             <h5 className="text-right text-secondary">
@@ -62,7 +90,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  getAllClients
+  getAllClients,
+  searchClient
 };
 
 export default connect(

@@ -27,6 +27,11 @@ export default function(state = initialState, action) {
         ...state,
         client: action.payload
       };
+    case type.SEARCH_CLIENT:
+      return {
+        ...state,
+        clients: action.payload
+      };
     default:
       return state;
   }
