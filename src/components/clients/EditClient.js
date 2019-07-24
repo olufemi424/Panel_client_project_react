@@ -55,11 +55,11 @@ class EditClient extends Component {
           <div className="row">
             <div className="col-md-6">
               <Link to="/dashboard" className="btn btn-link">
-                <i className="fas fa-arrow-circle-left">Back To Dashboard</i>
+                <i className="fas fa-arrow-circle-left"> Back To Dashboard</i>
               </Link>
             </div>
           </div>
-          <div className="card-header">Add Client</div>
+          <div className="card-header">Edit Client</div>
           <div className="card-body">
             <form onSubmit={this.handleSubmit}>
               <div className="form-group">

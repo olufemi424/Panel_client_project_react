@@ -1,6 +1,8 @@
 <<<<<<< HEAD
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+![image info](./screenshot.png)
+
 ## Available Scripts
 
 In the project directory, you can run:
@@ -66,8 +68,10 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/de
 
 ### `npm run build` fails to minify
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
-=======
+# This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+
 # Panel_client_project_react
+
 client panel project
->>>>>>> a039a743b71356b55dc4e140090903c14e20f748
+
+> > > > > > > a039a743b71356b55dc4e140090903c14e20f748
